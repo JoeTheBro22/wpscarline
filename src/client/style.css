@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@600&display=swap');
+html,
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: rgb(20, 20, 20);
+    font-family: "Tahoma", "Helvetica";
+    font-size: 22px;
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+@keyframes header {
+    0% {
+        opacity: 0;
+        color: rgb(255, 245, 245);
+        text-shadow: 0 0 0px #fff;
+    }
+    100% {
+        opacity: 1;
+        color: rgb(250, 240, 240);
+        text-shadow: 0 0 10px #fff;
+    }
+}
+h1 {
+    color: rgb(250, 250, 250);
+    text-shadow: 0 0 10px #fff;
+    animation: header 2s linear 1;
+    font-family: "Tahoma";
+    line-height: 50px;
+    margin-bottom: 0px;
+}
+h2{
+    color: rgb(250, 250, 250);
+    text-shadow: 0 0 10px #fff;
+    animation: header 2s linear 1;
+    font-family: "Tahoma";
+    line-height: 30px;
+    font-size: 20px;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+}
+.game {
+  display: -webkit-box;  /* OLD - iOS 6-, Safari 3.1-6, BB7 */
+  display: -ms-flexbox;  /* TWEENER - IE 10 */
+  display: -webkit-flex; /* NEW - Safari 6.1+. iOS 7.1+, BB10 */
+  display: flex;         /* NEW, Spec - Firefox, Chrome, Opera */
+  
+  justify-content: center;
+  align-items: center;
+}
+.private {
+  background-color: rgb(50, 50, 100);
+}
+.private:hover {
+    background-color: rgb(75, 75, 110);
+}
+.permanent {
+  background-color: rgb(20, 20, 20);
+}
+.permanent:hover {
+  background-color: rgb(35, 35, 35);
+}
+@keyframes rainbow {
+    0% {
+        border-color: hsl(0, 100%, 50%);
+    }
+    14% {
+        border-color: hsl(30, 100%, 50%);
+    }
+    28% {
+        border-color: hsl(60, 100%, 50%);
+    }
+    42% {
+        border-color: hsl(120, 100%, 50%);
+    }
+    56% {
+        border-color: hsl(240, 100%, 50%);
+    }
+    70% {
+        border-color: hsl(280, 100%, 50%);
+    }
+    84% {
+        border-color: hsl(320, 100%, 50%);
+    }
+    100% {
+        border-color: hsl(255, 100%, 50%);
+    }
+}
+
+input[type="text"] {
+    padding: 1px;
+    font-size: 25px;
+    color: #1f1633;
+    font-family: "Tahoma", "Helvetica";
+    background-color: #BFBFBF;/*rgba(241, 239, 239, 0.575)*/
+    text-align: center;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+
+    outline: none;
+    border: none;
+}
+button {
+    width:8vw;
+    height: 2vw;
+    font-size: 1vw;
+    font-family: "Tahoma", "Helvetica";
+    color: rgb(0, 0, 0);
+    background-color: #808080;
+    box-shadow: 0 0 30px #808080;
+    outline: none;
+    border: none;
+    animation: fadein 4s linear 1;
+    transition: 0.5s ease;
+    border-radius: 4px;
+}
+button:hover {
+    cursor: pointer;
+    background-color: rgb(80, 80, 80);
+}
+.menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: all 0.1s linear;
+    background-color: #E4E4E4;
+}
+.callInput {
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 50%;
+}
