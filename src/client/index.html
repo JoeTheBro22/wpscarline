@@ -3,25 +3,34 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <meta property="og:title" content="Test Game">
-    <meta property="og:image" content="./amogus.png">
+    <meta property="og:title" content="WPS Carline">
     <title>Carline Webserver</title>
+    <meta property="description" content="A web server that hopes to automate and aid in carline at WPS!">
+    <meta property="og:title" content="WPS Carline">
+    <meta property="og:description" content="A web server that hopes to automate and aid in carline at WPS!">
+    <meta property="og:image" content="/icon.jfif">
     <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
     <link href="style.css" rel="stylesheet" type="text/css" type='text/css'/>  
   </head>
   <body>
     <canvas id="canvas" width="1280" height="720" style="z-index: -1"></canvas>
+    <div class="moderator" id="moderator" style="display: none">
+      <!--<button id="dismissButton" style="display: none" class="dimissButton">Dismiss</a>-->
+        <p class="dismisstext" id="dismisstext">Available Students: </p>
+    </div>
+    <div class="sniper" id="sniper" style="display: none">
+      <!--<button id="dismissButton" style="display: none" class="dimissButton">Dismiss</a>-->
+    </div>
     <input type="text" id="callInput" style="display: none" class="callInput" maxlength="200" placeholder="Call Someone" autocomplete="off" spellcheck="false"></input>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
     <script src="player.js"></script>
-    <!--<script src="enemy.js"></script>
-    <script src="projectile.js"></script>
-    <script src="lerp.js"></script>--> 
     <div class = "menu" style="display: true">
       <input type="text" id="nameInput" maxlength="50" placeholder="Please Enter Your Name" autofocus autocomplete="off" spellcheck="false"></input>
       <div class="buttons">
         <button id="userbutton" class="userbutton">Enter as User</a>
-        <button id="adminbutton" class="adminbutton">Enter as Admin</a>
+        <button id="adminbutton" class="adminbutton">Enter as Parent</a>
+        <button id="modbutton" class="modbutton">Enter as Moderator 1</a>
+        <button id="sniperbutton" class="sniperbutton">Enter as Moderator 2</a>
       </div>
     </div>
     <script src="client.js"></script>

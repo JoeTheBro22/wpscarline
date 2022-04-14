@@ -7,16 +7,18 @@ ws.binaryType = "arraybuffer"
 
 var players = {};
 
-var renderPosX = canvas.width/2;
-var renderPosY = canvas.height/2;
-
 let selfId = "";
-
 let menu = document.querySelector(".menu");
 let userButton = document.getElementById("userbutton");
 let adminButton = document.getElementById("adminbutton");
+let modButton = document.getElementById("modbutton");
+let sniperButton = document.getElementById("sniperbutton");
+let sniperDiv = document.getElementById("sniper");
 let nameInput = document.getElementById("nameInput");
 let callInput = document.getElementById("callInput");
+let moderatorDiv = document.getElementById("moderator");
+let dismissText = document.getElementById("dismisstext");
+//let dismissButton = document.getElementById("dismissButton");
 
 let savedname = localStorage.getItem("carlineusername");// other sources might have taken the localstorage id name or username
 if (savedname != undefined) {
@@ -28,6 +30,13 @@ callsound.src = '/call.mp3';
 callsound.loop = false;
 callsound.volume = 1;
 
+document.addEventListener('visibilitychange', function() {
+	if(document.hidden){
+    ws.send(msgpack.encode({ offTask: selfId }));
+    alert('please stay on tab :(');
+  }
+});
+
 ws.addEventListener("message", function (data) {
     let message = msgpack.decode(new Uint8Array(data.data));
     if (message.pi) {
@@ -35,11 +44,23 @@ ws.addEventListener("message", function (data) {
         players[message.pi[i].id] = new Player(message.pi[i]);
       }
     }
+    if (message.l) {
+      delete players[message.l];
+    }
     if (message.called) {
-      for (let i in players) {
-        if (players[i].id == selfId) {
-          players[i].called = true;
+      for(let i in players){
+        if(players[i].name == message.name){
+          if(message.type == 'moderator' && players[o].called != 'dismissed'){
+            players[i].called = 'dismissed';
+          } else if(message.type == 'admin' && players[i].called != true){
+            players[i].called = true;
+          }
         }
+      }
+    }
+    if (message.late) {
+      if(players[message.late]){
+        players[message.late].late = true;
       }
     }
     if (message.si) {
@@ -51,6 +72,7 @@ ws.addEventListener("message", function (data) {
 });
 
 let called = false;
+let dismissed = false;
 function renderGame() {
   //bg
   ctx.fillStyle = "#BFBFBF";
@@ -62,18 +84,51 @@ function renderGame() {
       ctx.font = ctx.font.replace(/\d+px/, "42px");
       ctx.beginPath();
       ctx.fontSize = 42;
-      if(players[i].type != 'admin'){
-        if(players[i].called){
+      if(players[i].type != 'admin' && players[i].type != 'moderator' && players[i].type != 'sniper'){
+        if(players[i].called == 'dismissed'){
+          if(!dismissed){
+            callsound.play();// seperate sound effect?
+            dismissed = true;
+          }
+          ctx.fillText("You are dismissed! Feel free to close this tab.", canvas.width/2, canvas.height/2);
+        } else if(players[i].called){
           if(!called){
             callsound.play();
             called = true;
           }
-          ctx.fillText("You were called!", canvas.width/2, canvas.height/2);
+          if(players[i].late == true){
+            ctx.fillText("You are late! Please report to a moderator immediately.", canvas.width/2, canvas.height/2);
+          } else {
+            ctx.fillText("You were called!", canvas.width/2, canvas.height/2);
+          }
         } else {
           ctx.fillText("You haven't been called ... sit tight!", canvas.width/2, canvas.height/2);
         }
-      } else {
-        canvas.style.display = "none";
+      } else if(players[i].type == 'admin') {
+        let pdisplay = '';
+        for(let j in players){
+          if(players[j].name != 'Admin' && players[j].name != 'Moderator' && players[j].name != 'Mod2' && players[j].called != true && players[j].called != 'dismissed'){
+            pdisplay = pdisplay + players[j].name + ', ';
+          }
+        }
+        dismissText.innerHTML = "Available Students: " + pdisplay;
+      } else if(players[i].type == 'moderator'){
+        let pdisplay = '';
+        for(let j in players){
+          if(players[j].name != 'Admin' && players[j].name != 'Moderator' && players[j].name != 'Mod2' && players[j].called == true){
+            pdisplay = pdisplay + players[j].name + ', ';
+          }
+        }
+        dismissText.innerHTML = "Called Students: " + pdisplay;
+        //ctx.fillText(, canvas.width/2, canvas.height/2, canvas.width-20);
+      } else if(players[i].type == 'sniper'){
+        let pdisplay = '';
+        for(let j in players){
+          if(players[j].late && players[j].type != 'admin' && players[j].type != 'moderator' && players[j].type != 'sniper'){
+            pdisplay = pdisplay + players[j].name + ', ';
+          }
+        }
+        ctx.fillText("Late Students: " + pdisplay, canvas.width/2, canvas.height/2);
       }
     }
   }
@@ -84,21 +139,54 @@ userButton.onclick = () => {
   localStorage.setItem("carlineusername", document.getElementById("nameInput").value);
   userButton.style.display = "none";
   adminButton.style.display = "none";
+  modButton.style.display = "none";
+  sniperButton.style.display = "none";
   menu.style.display = "none";
 }
 
 adminButton.onclick = () => {
-  ws.send(msgpack.encode({ begin: true, type: 'admin', name: nameInput.value }))
-  localStorage.setItem("carlineusername", document.getElementById("nameInput").value);
-  userButton.style.display = "none";
-  adminButton.style.display = "none";
-  menu.style.display = "none";
-  callInput.style.display = "";
+  if(nameInput.value == 'Admin'){// we can update the password when we get an email from staff
+    ws.send(msgpack.encode({ begin: true, type: 'admin', name: nameInput.value }))
+    localStorage.setItem("carlineusername", document.getElementById("nameInput").value);
+    userButton.style.display = "none";
+    adminButton.style.display = "none";
+    modButton.style.display = "none";
+    sniperButton.style.display = "none";
+    menu.style.display = "none";
+    callInput.style.display = "";
+    moderatorDiv.style.display = "";
+  }
 }
 
-function Init() {
-  //menu.style.display = 'none';
-  
+modButton.onclick = () => {
+  if(nameInput.value == 'Moderator'){
+    ws.send(msgpack.encode({ begin: true, type: 'moderator', name: nameInput.value }))
+    localStorage.setItem("carlineusername", document.getElementById("nameInput").value);
+    userButton.style.display = "none";
+    modButton.style.display = "none";
+    sniperButton.style.display = "none";
+    adminButton.style.display = "none";
+    menu.style.display = "none";
+    callInput.style.display = "";
+    moderatorDiv.style.display = "";
+  }
+}
+
+sniperButton.onclick = () => {
+  if(nameInput.value == 'Mod2'){
+    ws.send(msgpack.encode({ begin: true, type: 'sniper', name: nameInput.value }))
+    localStorage.setItem("carlineusername", document.getElementById("nameInput").value);
+    userButton.style.display = "none";
+    modButton.style.display = "none";
+    sniperButton.style.display = "none";
+    adminButton.style.display = "none";
+    menu.style.display = "none";
+    callInput.style.display = "none";
+    moderatorDiv.style.display = "none";
+    sniperDiv.style.display = "";
+    //lateText.style.display = "none"; to do: make lateText render with html instead of on canvas (bc its better resolution)
+    //canvas.style.display = "none";
+  }
 }
 
 function Resize() {
@@ -126,7 +214,13 @@ document.onkeydown = function (e) {
     else {
       let message = document.getElementById("callInput").value;
       if (message.length > 0) {
-        ws.send(msgpack.encode({ call: message }));
+        let type = null;
+        for (let i in players) {
+          if (players[i].id == selfId) {
+            type = players[i].type;
+          }
+        }
+        ws.send(msgpack.encode({ call: message, type: type }));
       }
       document.getElementById("callInput").value = "";
     }

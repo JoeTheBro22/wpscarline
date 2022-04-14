@@ -60,7 +60,7 @@ wss.on("connection", ws => {
 			// this point onward should be in begin
 			let playerInitPack = [];
 			//Get all player init pack and push to player init array
-			for (let i in players) {
+			for (let i of Object.keys(players)) {
 				playerInitPack.push(players[i].getInitPack());
 			}
 
@@ -68,7 +68,7 @@ wss.on("connection", ws => {
 			let newPlayerPack = [];
 			newPlayerPack.push(players[clientId].getInitPack());
 
-			for (let i in players) {
+			for (let i of Object.keys(players)) {
 				//player init
 				if (players[i].id != clientId) {
 					players[i].client.send(msgpack.encode({ pi: newPlayerPack }));
@@ -78,11 +78,14 @@ wss.on("connection", ws => {
 			players[clientId].client.send(msgpack.encode({ pi: playerInitPack }));
 		}
 		if (d.call) {
-			for(let i in players){
-				if(players[i].name == d.call){
-					players[i].client.send(msgpack.encode({ called: true }));
-				}
+			for (let i of Object.keys(players)) {
+				players[i].called = true;
+				players[i].client.send(msgpack.encode({ called: true, type: d.type, name: d.call}));
 			}
+		}
+
+		if(d.offTask){
+			// todo: make offtask message asign things in database or display other info idk
 		}
 	})
 })
@@ -101,7 +104,7 @@ let lastTime = Date.now();
 let playerPack = [];
 
 //Get all player init pack and push to player init array
-for (let i in players) {
+for (let i of Object.keys(players)) {
 	playerInitPack.push(players[i].getInitPack());
 }
 
@@ -109,6 +112,14 @@ function mainLoop() {
 	let time = Date.now();
 	let delta = time - lastTime;
 	lastTime = time;
+	for(let i in players){
+		players[i].update(delta);
+		if(players[i].late){
+			for(let j in players){
+				players[j].client.send(msgpack.encode({ late: players[i].id}));
+			}
+		}
+	}
 
 	//Reset player pack array
 	playerPack = [];
@@ -123,4 +134,4 @@ setInterval(() => {
 	}
 }, 1000 / 30);
 
-console.log("App listening to Server " + PORT);
+console.log("App Available at localhost:" + PORT);

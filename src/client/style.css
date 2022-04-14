@@ -118,9 +118,9 @@ input[type="text"] {
     border: none;
 }
 button {
-    width:8vw;
-    height: 2vw;
-    font-size: 1vw;
+    width:92;
+    height: 38;
+    font-size: 12;
     font-family: "Tahoma", "Helvetica";
     color: rgb(0, 0, 0);
     background-color: #808080;
@@ -149,4 +149,18 @@ button:hover {
     margin-right: auto;
     margin-left: auto;
     margin-top: 50%;
+}
+
+.dismisstext {
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    margin: auto;
+    top: 50%;
+    left: 50%;
+    top: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+    color: #808080;
+    font-size: 42px;
 }
